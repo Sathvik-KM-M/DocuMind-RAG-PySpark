@@ -1,3 +1,5 @@
 This is a sample document.
 The warranty period is 2 years.
 Returns allowed within 30 days.
+
+Maths is the language of all science 
