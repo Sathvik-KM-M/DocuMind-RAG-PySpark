@@ -6,7 +6,11 @@ def read_file(file_path):
 def chunk_text(text, chunk_size=50, overlap=10):
     chunks = []
     for i in range(0, len(text), chunk_size - overlap):
-        chunks.append(text[i:i + chunk_size])
+        chunk = text[i:i + chunk_size]
+        
+        if len(chunk.strip()) > 20:
+            chunks.append(chunk)
+    
     return chunks
 
 
