@@ -3,13 +3,13 @@ def read_file(file_path):
         return f.read()
 
 
-def chunk_text(text, chunk_size=50, overlap=10):
+def chunk_text(text, chunk_size=2):
+    sentences = text.split("\n")
     chunks = []
-    for i in range(0, len(text), chunk_size - overlap):
-        chunk = text[i:i + chunk_size]
-        
-        if len(chunk.strip()) > 20:
-            chunks.append(chunk)
+    
+    for i in range(0, len(sentences), chunk_size):
+        chunk = " ".join(sentences[i:i+chunk_size])
+        chunks.append(chunk)
     
     return chunks
 
