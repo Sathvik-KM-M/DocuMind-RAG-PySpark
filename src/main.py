@@ -1,13 +1,15 @@
-from ingestion import read_file, chunk_text
+from ingestion import chunk_text
 from embedding import get_embeddings
 import faiss
 import numpy as np
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from pyspark_ingestion import read_documents
 
 # load generator
 # generator = pipeline("text-generation", model="google/flan-t5-small")
 
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+text = read_documents("src/data/sample.txt")
+
 
 tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small")
 model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-small")
@@ -18,8 +20,8 @@ def generate_answer(prompt):
     return tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 # 1. Load and chunk document
-file_path = "src/data/sample.txt"
-text = read_file(file_path)
+# file_path = "src/data/sample.txt"
+# text = read_file(file_path)
 chunks = chunk_text(text)
 
 print("Chunks created:", len(chunks))
