@@ -2,6 +2,20 @@ from ingestion import read_file, chunk_text
 from embedding import get_embeddings
 import faiss
 import numpy as np
+from transformers import pipeline
+
+# load generator
+# generator = pipeline("text-generation", model="google/flan-t5-small")
+
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small")
+model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-small")
+
+def generate_answer(prompt):
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(**inputs, max_new_tokens=50)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 # 1. Load and chunk document
 file_path = "src/data/sample.txt"
@@ -34,5 +48,26 @@ distances, indices = index.search(query_embedding, k)
 # 6. Retrieve result
 result = chunks[indices[0][0]]
 
-print("\nMost relevant chunk:")
+print("\nRetrieved context:")
 print(result)
+
+prompt = f"""
+Answer the question ONLY using the context below.
+If the answer is not in the context, say "I don't know".
+
+Context:
+{result}
+
+Question:
+{query}
+
+Answer:
+"""
+
+answer = generate_answer(prompt)
+
+print("\nGenerated Answer:")
+print(answer)
+
+# print("\nGenerated Answer:")
+# print(response[0]['generated_text'])

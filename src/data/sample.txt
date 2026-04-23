@@ -2,4 +2,6 @@ This is a sample document.
 The warranty period is 2 years.
 Returns allowed within 30 days.
 
+2+2=4
+
 Maths is the language of all science 
