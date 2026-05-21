@@ -1,21 +1,21 @@
 from pyspark.sql import SparkSession
 
-def read_documents(file_path):
-    spark = SparkSession.builder \
-        .appName("DocuMind-RAG") \
-        .getOrCreate()
+spark = SparkSession.builder \
+    .appName("DocuMind-RAG") \
+    .getOrCreate()
 
-    df = spark.read.text(file_path)
-    text = "\n".join([row.value for row in df.collect()])
+df = spark.readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("subscribe", "document-stream") \
+    .load()
 
-    # Combine all rows into single text
-    #  text = " ".join([row.value for row in df.collect()])
-   
+value_df = df.selectExpr("CAST(value AS STRING)")
 
-    return text
+query = value_df.writeStream \
+    .format("console") \
+    .outputMode("append") \
+    .start()
 
+query.awaitTermination()
 
-if __name__ == "__main__":
-    text = read_documents("data/sample.txt")
-    print("Loaded text:")
-    print(text)
